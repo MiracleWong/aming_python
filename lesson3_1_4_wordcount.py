@@ -9,4 +9,4 @@ chars = len(data)
 words = len(data.split())
 lines = data.count('\n')
 
-x
+print "%(chars)s %(words)s %(lines)s" %locals()
