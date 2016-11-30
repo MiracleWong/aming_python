@@ -10,6 +10,7 @@ def getIfconfig():
     return [i for i in data if i and not i.startswith('lo')]
 
 def paresIfconfig(data):
+	dic = {}
 	for lines in data:
 		line_list = lines.split('\n')
 		devname = line_list[0].split()[0]
