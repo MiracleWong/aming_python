@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # encoding:utf-8
 
-
+import sys
 import urllib, urllib2
 import re
 
@@ -24,7 +24,7 @@ def getPage(page_num=1):
 
 def getPageContent(page_num=1):
 	html = getPage(page_num)
-	re_page = re.compile(r'<div class="author.*?>.*?<a.*?<img.*?alt="(.*?)"/>.*?<div class="content">(.*?)</div>.*?<div class="stats">.*?<i class="number">(\d+)</i>', re.S)
+	re_page = re.compile(r'<div class="author.*?>.*?<h2>(.*?)</h2>.*?<div class="content">(.*?)</div>.*?<div class="stats">.*?<i class="number">(\d+)</i>', re.S)
 
 	items = re_page.findall(html)
 	page_contents = []
@@ -36,9 +36,18 @@ def getPageContent(page_num=1):
 
 	return page_contents
 
+def getOneStory(page_contents):
+	for story in page_contents:
+		input = raw_input()
+		if input == 'Q' or input == 'q':
+			sys.exit()
+		print "第%d页\t发布人：%s\t赞：%s\t%s\t" %(story[0], story[1], story[3], story[2])
+
 
 if __name__ == '__main__':
-	page_contents = getPageContent()
-	for item in page_contents:
-		for i in item:
-			print i
+	print "正在读取段子，按回车看新段子，退出（Q|q）"
+	num = 1
+	while True:
+		page_contents = getPageContent(num)
+		getOneStory(page_contents)
+		num += 1
