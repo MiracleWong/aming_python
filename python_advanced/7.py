@@ -8,5 +8,3 @@ def fabnaci(n):
 		return n + fabnaci(n-1)
 
 print fabnaci(100)
-
-
