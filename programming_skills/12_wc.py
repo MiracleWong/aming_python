@@ -20,6 +20,11 @@ def opt():
 		action="store_true",
 		default=False,
 		help="only count lines")
+	parser.add_option("-n", "--nototal",
+		dest="nototal",
+		action="store_true",
+		default=False,
+		help="show total or not")
 	options, args = parser.parse_args()
 	return options, args
 
@@ -43,14 +48,33 @@ def main():
 	if not (options.lines or options.words or options.lines):
 		options.lines, options.words, options.chars = True, True, True
 	if  args:
-		fn = args[0]
-		with open(fn) as fd:
-			data = fd.read()
+		total_lines, total_words, total_chars = 0, 0, 0
+		for fn in args:
+			if os.path.isfile(fn):
+				with open(fn) as fd:
+					data = fd.read()
+				lines, words, chars = get_count(data)
+				print_wc(fn, options, lines, words, chars)
+				total_lines += lines
+				total_words += words
+				total_chars += chars
+			elif os.path.isdir(fn):
+				print >> sys.stderr, "%s:is a directory " % fn
+			else:
+				# print >> sys.stderr,"%s: No such file or directory" % fn
+				sys.stderr.write("%s:No such file or directory\n " % fn)
+
+		if len(args) > 1 and not options.nototal:
+			print_wc('total', options, total_lines, total_words, total_chars)
 	else:
 		data = sys.stdin.read()
 		fn = ''
-	lines, words, chars = get_count(data)
-	print_wc(fn, options, lines, words, chars)
+		lines, words, chars = get_count(data)
+		print_wc(fn, options, lines, words, chars)
 
 if __name__ == '__main__':
 	main()
+
+
+
+
