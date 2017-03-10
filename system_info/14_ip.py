@@ -35,12 +35,3 @@ def paresIfconfig(data):
 if __name__ == '__main__':
 	data = getIP1()
 	print getIP(data)
-
-
-
-
-	
-
-
-
-
