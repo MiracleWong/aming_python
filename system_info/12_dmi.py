@@ -14,37 +14,31 @@ def getDmi():
 	data=p.stdout.read()
 	return data
 
-def parseData(data):
-	parsed_data=[]
-	new_line=''
-	data = [i for i in data.split('\n')if i]
-	for line in data:
-		if line[0].strip():
-			parsed_data.append(new_line)
-			new_line += line+'\n'
-		else:
-			new_line += line+'\n'
-	parsed_data.append(new_line)
-	return [i for i in parsed_data if i]
-
-def parseIfconfig(parsed_data):
-	dic={}
-	parsed_data=[i for i in parsed_data if not i.startswith('lo')]
-	for lines in parsed_data:
-		line_list=lines.split('\n')
-		devname=line_list[0].split()[0]
-		macaddr=line_list[0].split()[-1]
-		ipaddr=line_list[1].split()[1].split(':')[1]
-		break
-		dic['ip'] = ipaddr
-	return dic
-
+def parseDmi(data):
+	lines = []
+	line_in = False
+	dmi_list = [i for i in data.split('\n') if i]
+	for line in dmi_list:
+		if line.startswith('System Information'):
+			line_in = True
+			continue
+		if line_in:
+			if not line[0].strip():
+				lines.append(line)
+			else:
+				break
+	return lines
+def dmiDic():
+	dmi_dic = {}
+	data = getDmi()
+	lines = parseDmi(data)
+	dic = dict([i.strip().split(': ') for i in lines])
+	dmi_dic['vendor'] = dic['Manufacturer']
+	dmi_dic['product'] = dic['Product Name']
+	dmi_dic['sn'] = dic['Serial Number']
+	return dmi_dic
 if __name__ == '__main__':
-	data = getIfconfig()
-	parse_data = parseData(data)
-	print parseIfconfig(parse_data)
-
-
+	print dmiDic()
 	
 
 
