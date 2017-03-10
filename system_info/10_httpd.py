@@ -8,12 +8,3 @@ def getPid():
     return pids
 
 print getPid()
-
-
-
-
-	
-
-
-
-
