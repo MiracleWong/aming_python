@@ -23,7 +23,7 @@ def parseData(data):
             parsed_data.append(new_line)
             new_line = line + '\n'
         else:
-            new_line += line + '\n'                
+            new_line += line + '\n'
     parsed_data.append(new_line)
     return [i for i in parsed_data if i]
 def parseIfconfig(parsed_data):
@@ -36,7 +36,7 @@ def parseIfconfig(parsed_data):
         ipaddr = line_list[1].split()[1].split(':')[1]
         break
     dic['ip'] = ipaddr
-    return dic 
+    return dic
 
 def parseDmi(parsed_data):
     dmi_dic = {}
@@ -47,11 +47,58 @@ def parseDmi(parsed_data):
     dmi_dic['product'] = dic['Product Name'].strip()
     dmi_dic['sn'] = dic['Serial Number'].strip()[:15]
     return dmi_dic
-    
+
+def getHostname(f):
+    with open(f) as fd:
+        for line in fd:
+            if line.startswith('HOSTNAME'):
+                hostname = line.split('=')[1].strip()
+                break
+    return {'hostname': hostname}
+
+def getOSver(f):
+    with open(f) as fd:
+        for line in fd:
+            osver = line.strip()
+            break
+    return {'osver': osver}
+
+def getCpu(f):
+    num = 0
+    with open(f) as fd:
+        for line in fd:
+            if line.startswith('processor'):
+                num += 1
+            if line.startswith('model name'):
+                cpu_model = line.split(':')[1].split()
+                cpu_model = cpu_model[0] + ' ' + cpu_model[-1]
+    return {'cpu_num': num, 'cpu_model': cpu_model}
+
+def getMemory(f):
+    with open(f) as fd:
+        for line in fd:
+            if line.startswith('MemTotal'):
+                mem = int(line.split(':')[1].strip())
+                break
+    mem = "%s" % int(mem/1024.0) + 'M'
+    return {'memory': mem}
+
 if __name__ == '__main__':
+    dic = {}
 	data_ip =  getIfconfig()
 	parsed_data_ip = parseData(data_ip)
-	print parseIfconfig(parsed_data_ip)
-	data_dmi =  getDmi()
-        parsed_data_dmi = parseData(data_dmi)
-	print parseDmi(parsed_data_dmi)
+    ip = parseIfconfig(parsed_data_ip)
+	data_dmi = getDmi()
+    parsed_data_dmi = parseData(data_dmi)
+    dmi = parseDmi(parsed_data_ip)
+    hostname = getHostname('/etc/sysconfig/network')
+    osver = getOSver('/etc/issue')
+    cpu = getCpu('/proc/cpuinfo')
+    mem = getMemory('/eproctc/meminfo')
+    dic.update(ip)
+    dic.update(dmi)
+    dic.update(hostname)
+    dic.update(osver)
+    dic.updatecpu
+    dic.update(mem)
+    print dic
