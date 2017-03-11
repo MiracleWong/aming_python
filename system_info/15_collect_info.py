@@ -78,27 +78,27 @@ def getMemory(f):
     with open(f) as fd:
         for line in fd:
             if line.startswith('MemTotal'):
-                mem = int(line.split(':')[1].strip())
+                mem = int(line.split(':')[1].split()[0])
                 break
     mem = "%s" % int(mem/1024.0) + 'M'
     return {'memory': mem}
 
 if __name__ == '__main__':
     dic = {}
-	data_ip =  getIfconfig()
-	parsed_data_ip = parseData(data_ip)
+    data_ip =  getIfconfig()
+    parsed_data_ip = parseData(data_ip)
     ip = parseIfconfig(parsed_data_ip)
-	data_dmi = getDmi()
+    data_dmi = getDmi()
     parsed_data_dmi = parseData(data_dmi)
-    dmi = parseDmi(parsed_data_ip)
+    dmi = parseDmi(parsed_data_dmi)
     hostname = getHostname('/etc/sysconfig/network')
     osver = getOSver('/etc/issue')
     cpu = getCpu('/proc/cpuinfo')
-    mem = getMemory('/eproctc/meminfo')
+    mem = getMemory('/proc/meminfo')
     dic.update(ip)
     dic.update(dmi)
     dic.update(hostname)
     dic.update(osver)
-    dic.updatecpu
+    dic.update(cpu)
     dic.update(mem)
     print dic
