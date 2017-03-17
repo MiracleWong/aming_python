@@ -2,6 +2,7 @@
 #-*- coding:utf-8 -*-
 
 import string
+import urllib, urllib2
 from subprocess import Popen, PIPE
 
 def getIfconfig():
@@ -103,5 +104,5 @@ if __name__ == '__main__':
     dic.update(mem)
     print dic
     data = urllib.urlencode(dic)
-    req=urllib2.urlopen('http://127.0.0.1:8000/hostinfo/collect/',data)
+    req=urllib2.urlopen('http://192.168.72.128:8000/hostinfo/collect/',data)
     print req.read()
