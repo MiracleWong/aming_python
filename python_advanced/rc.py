@@ -29,6 +29,10 @@ class Process(object):
                 fd.write(str(self.pid))
 
     def start(self):
+        pid = self._getPid()
+        if pid:
+            print "%s is running..." % self.name
+            sys.exit()
         self._init()
         cmd = self.program + ' ' + self.args
         p = Popen(cmd, stdout = PIPE, shell = True)
