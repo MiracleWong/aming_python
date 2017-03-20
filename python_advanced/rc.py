@@ -35,7 +35,19 @@ class Process(object):
         self.pid = p.pid
         self._writePid()
         print "%s start Sucessful" % self.name
+
+    def _getPid(self):
+        p = Popen(['pidof', self.name], stdout = PIPE)
+        pid = p.stdout.read().strip()
+        return pid
+
     def stop(self):
+        pid = self._getPid()
+        if pid:
+            os.kill(int(pid), 15)
+            if os.path.exists(self._pidFile()):
+                os.remove(self._pidFile())
+            print "%s is stopped " % self.name
         pass
     def restart(self):
         self.stop()
