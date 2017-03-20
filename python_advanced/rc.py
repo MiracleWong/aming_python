@@ -2,7 +2,7 @@
 #-*- coding:utf-8 -*-
 
 import sys, os
-import subprocess import Popen, PIPE
+from subprocess import Popen, PIPE
 class Process(object):
     '''memcached rc script'''
     def __init__(self, name, program, args, workdir):
@@ -25,10 +25,11 @@ class Process(object):
 
     def _writePid(self):
     	if self.pid:
-    		with open(self._pidFile(), 'w') as fd:
-    			fd.write(str(self.pid))
+            with open(self._pidFile(), 'w') as fd:
+                fd.write(str(self.pid))
 
     def start(self):
+        self._init()
         cmd = self.program + ' ' + self.args
         p = Popen(cmd, stdout = PIPE, shell = True)
         self.pid = p.pid
@@ -45,29 +46,28 @@ class Process(object):
         pass 
 
 def main():
-	name = 'memcached'
-	proc = '/usr/bin/memcached'
-	args = '-u nobody -p 11211 -c 1024 -m 64'
-	wd = '/var/tmp/memcached'
-	pm = Process(name = name, program = proc, args = args, workdir = wd)
-	try:
-		cmd = sys.argv[1]
-	except IndexError, e:
-		print "Option Error"
-		sys.exit()
-
-	if cmd == 'start':
-		pm.start()
-	elif cmd == 'stop':
-		pm.stop()
-	elif cmd == 'restart':
-		pm.restart()
-	elif cmd == 'status':
-		pm.status()
-	else:
-		pm.help()
+    name = 'memcached'
+    proc = '/usr/bin/memcached'
+    args = '-u nobody -p 11211 -c 1024 -m 64'
+    wd = '/var/tmp/memcached'
+    pm = Process(name = name, program = proc, args = args, workdir = wd)
+    try:
+    	cmd = sys.argv[1]
+    except IndexError, e:
+    	print "Option Error"
+    	sys.exit()
+    if cmd == 'start':
+    	pm.start()
+    elif cmd == 'stop':
+    	pm.stop()
+    elif cmd == 'restart':
+    	pm.restart()
+    elif cmd == 'status':
+    	pm.status()
+    else:
+    	pm.help()
 
 
 
 if __name__ == '__main__':
-	main()
+    main()
