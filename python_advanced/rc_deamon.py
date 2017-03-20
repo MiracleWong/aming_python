@@ -34,7 +34,7 @@ class Process(object):
             with open(self._pidFile(), 'w') as fd:
                 fd.write(str(self.pid))
 
-    def _readConf(self):
+    def _readConf(self, f):
         with open(f) as fd:
             lines = fd.readlines()
             return dict([i.strip().replace('"','').split('=') for i in lines])
