@@ -53,7 +53,11 @@ class Process(object):
         self.stop()
         self.start()
     def status(self):
-        pass
+        pid = self._getPid()
+        if pid:
+            print "%s is already running" % self.name
+        else:
+            print "%s is not running" % self.name
     def help(self):
         pass 
 
