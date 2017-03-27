@@ -1,6 +1,7 @@
 #!/usr/bin/python
 #-*- coding:utf-8 -*-
 
+<<<<<<< Updated upstream
 import sys, os
 from subprocess import Popen, PIPE
 class Process(object):
@@ -86,8 +87,59 @@ def main():
     	pm.status()
     else:
     	pm.help()
+=======
+class Process(object):
+	name = 'Test'
+
+	def __init__(self,name, program, args, workdir):
+		self.name = name
+		self.program = program
+		self.args = args
+		self.workdir = workdir
+
+	def start(self):
+
+	def stop(self):
+
+
+	def restart(self):
+		self.stop()
+		self.start()
+
+	def status(self):
+
+	def help(self):
+		# print ""
+
+def main():
+	name = 'memcached'
+	proc = '/usr/bin/memcached'
+	args = '-u nobody -p 11211 -c 1024 -m 64'
+	wd = '/var/tmp/memcached'
+	pm = Process(name = name, program = proc, args = args, workdir = wd)
+	try:
+		cmd = sys.argv[1]
+	except IndexError, e:
+		print "Option Error"
+		sys.exit()
+
+	if cmd == 'start':
+		pm.start()
+	elif cmd == 'stop':
+		pm.stop()
+	elif cmd == 'restart':
+		pm.restart()
+	elif cmd == 'status':
+		pm.status()
+	else:
+		pm.help()
+>>>>>>> Stashed changes
 
 
 
 if __name__ == '__main__':
+<<<<<<< Updated upstream
     main()
+=======
+	main()
+>>>>>>> Stashed changes
