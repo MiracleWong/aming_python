@@ -3,6 +3,8 @@
 import os
 import urllib, urllib2
 import tarfile
+from distutils.version import LooseVersion
+import shutil
 
 URL_LASTVER = "http://192.168.72.134:8080/deploy/lastver"
 URL_LIVEVER = "http://192.168.72.134:8080/deploy/livever"
@@ -76,7 +78,26 @@ def checkLiveVersion():
         else:
             os.symlink(pkg_path, DOC_ROOT)
 
+def versionSort(l):
+    from distutils.version import LooseVersion
+    vs = [LooseVersion(i) for i in l]
+    vs.sort()
+    return [i.vstring for i in vs]
+
+def clean():
+    download_list = [i.split('-')[1][:-7] for i in os.listdir(DOWNLOAD_DIR)] 
+    deploy_list = [i.split('-')[1][:-7] for i in os.listdir(DEPLOY_DIR)] 
+    tobe_del_download = versionSort(download_list)[:1]
+    tobe_del_deploy = versionSort(deploy_list)[:1]
+    for d in tobe_del_download:
+        fn = os.path.join(DOWNLOAD_DIR, "%s-%s.tar.gz" % (APP_NAME, d))
+        os.remove(fn)
+    for d in deploy_list:
+        fn = os.path.join(DEPLOY_DIR, "%s-%sz" % (APP_NAME, d))
+        shutil.rmtree(fn)
+
 if __name__ == "__main__":
     init()
     checkLastVersion()
     checkLiveVersion()
+    clean()
