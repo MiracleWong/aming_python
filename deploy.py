@@ -13,7 +13,9 @@ DOWNLOAD_DIR = "/var/www/download"
 DEPLOY_DIR = "/var/www/deploy"
 APP_NAME = "wordpress"
 
-DOC_ROOT = '/var/www/html/current';
+DOC_ROOT = '/var/www/html/current'
+TOBE_KEEP = 2
+WHITE = []
 
 
 def init():
@@ -25,6 +27,7 @@ def getURL(url):
     return urllib2.ulropen(url).read().strip()
 def checkLastVersion()
     lastver = getURL(URL_LASTVER)
+    WHITE.append(lastver)
     url_pkg_path = URL_PKG + "%s-%s.tar.gz" % (APP_NAME, lastver)
     pkg_path = os.path.join(DOWNLOAD_DIR, "%s-%s".tar.gz % (APP_NAME, lastver))
     if not os.path.exists(pkg_path):
@@ -68,6 +71,7 @@ def pkg_deploy(fn, d):
 
 def checkLiveVersion():
     livever = getURL(URL_LIVEVER)
+    WHITE.append(livever)
     pkg_path = os.path.join(DEPLOY_DIR, "%s-%s" % (APP_NAME, livever))
     if os.path.exists(pkg_path):
         if os.path.exists(DOC_ROOT):
@@ -87,17 +91,29 @@ def versionSort(l):
 def clean():
     download_list = [i.split('-')[1][:-7] for i in os.listdir(DOWNLOAD_DIR)] 
     deploy_list = [i.split('-')[1][:-7] for i in os.listdir(DEPLOY_DIR)] 
-    tobe_del_download = versionSort(download_list)[:1]
-    tobe_del_deploy = versionSort(deploy_list)[:1]
+    tobe_del_download = versionSort(download_list)[:-TOBE_KEEP]
+    tobe_del_deploy = versionSort(deploy_list)[:-TOBE_KEEP]
     for d in tobe_del_download:
         fn = os.path.join(DOWNLOAD_DIR, "%s-%s.tar.gz" % (APP_NAME, d))
-        os.remove(fn)
-    for d in deploy_list:
+        if d not in WHITE:
+            os.remove(fn)
+    for d in tobe_del_deploy:
         fn = os.path.join(DEPLOY_DIR, "%s-%sz" % (APP_NAME, d))
-        shutil.rmtree(fn)
+        if d not in WHITE:
+            shutil.rmtree(fn)
+## 实现文件锁
+def lockfile(f):
+    if os.path.exists(f):
+        print "%s is running..." %__file__
+        sys.exit()
+    with open(f,'w') as fd:
+        fd.write(str(os.getpid()))     
+
 
 if __name__ == "__main__":
+    lockfile('/tmp/deploy.lock')
     init()
     checkLastVersion()
     checkLiveVersion()
     clean()
+    unlockfile('/tmp/deploy.lock')
