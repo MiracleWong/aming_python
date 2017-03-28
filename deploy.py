@@ -1,14 +1,15 @@
 #!/usr/bin/python
 #-*- coding:utf-8 -*-
 import os
+import sys
 import urllib, urllib2
 import tarfile
 from distutils.version import LooseVersion
 import shutil
 
-URL_LASTVER = "http://192.168.72.134:8080/deploy/lastver"
-URL_LIVEVER = "http://192.168.72.134:8080/deploy/livever"
-URL_PKG= "http://192.168.72.134:80/deploy/packages"
+URL_LASTVER = "http://192.168.72.136:8080/deploy/lastver"
+URL_LIVEVER = "http://192.168.72.136:8080/deploy/livever"
+URL_PKG= "http://192.168.72.136:80/deploy/packages"
 DOWNLOAD_DIR = "/var/www/download"
 DEPLOY_DIR = "/var/www/deploy"
 APP_NAME = "wordpress"
@@ -107,8 +108,11 @@ def lockfile(f):
         print "%s is running..." %__file__
         sys.exit()
     with open(f,'w') as fd:
-        fd.write(str(os.getpid()))     
+        fd.write(str(os.getpid())) 
 
+## 解锁文件
+def unlockfile(f):
+    os.remove(f)
 
 if __name__ == "__main__":
     lockfile('/tmp/deploy.lock')
