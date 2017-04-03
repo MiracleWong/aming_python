@@ -7,7 +7,7 @@ import tarfile
 from distutils.version import LooseVersion
 import shutil
 
-URL_LASTVER = "http://192.168.72.136:8080/deploy/lastver"
+URL_LASTVER = "http://192.168.72.133:80/deploy/lastver"
 URL_LIVEVER = "http://192.168.72.136:8080/deploy/livever"
 URL_PKG= "http://192.168.72.136:80/deploy/packages"
 DOWNLOAD_DIR = "/var/www/download"
